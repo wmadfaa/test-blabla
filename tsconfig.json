@@ -19,7 +19,6 @@
       "inlineSources": true
     },
     "include": [
-      // "**/*.ts",
       "src"
     ]
   }

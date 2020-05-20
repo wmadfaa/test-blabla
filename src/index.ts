@@ -1,1 +1,2 @@
-export { CryptoTicker } from "./CryptoTicker.js";
+import "./crypto-ticker";
+// export { CryptoTicker } from "./CryptoTicker.js";
