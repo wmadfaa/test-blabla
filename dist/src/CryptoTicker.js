@@ -1,32 +1,43 @@
 import { __decorate } from "tslib";
-import { html, css, LitElement, property } from 'lit-element';
+import { LitElement, property } from "lit-element";
+import TickerService from "./service";
+import { Exchange } from "./service/types/index";
 export class CryptoTicker extends LitElement {
     constructor() {
         super(...arguments);
-        this.title = 'Hey there';
-        this.counter = 5;
+        this.exchange = Exchange.BINANCE;
+        this._onData = (data) => {
+            const evt = new CustomEvent("stream", { detail: data });
+            this.dispatchEvent(evt);
+        };
     }
-    __increment() {
-        this.counter += 1;
+    connectedCallback() {
+        super.connectedCallback();
+        if (this.pair && this.exchange) {
+            TickerService.subscribe(this.pair, this.exchange, this._onData);
+        }
     }
-    render() {
-        return html `
-      <h2>${this.title} Nr. ${this.counter}!</h2>
-      <button @click=${this.__increment}>increment</button>
-    `;
+    disconnectedCallback() {
+        super.disconnectedCallback();
+        if (this.pair && this.exchange) {
+            TickerService.unsubscribe(this.pair, this.exchange, this._onData);
+        }
+    }
+    update(prev) {
+        if (prev.has("pair") || prev.has("exchange")) {
+            const pair = prev.get("pair") || this.pair;
+            const exchange = prev.get("exchange") || this.exchange;
+            TickerService.unsubscribe(pair, exchange, this._onData);
+            if (this.pair && this.exchange) {
+                TickerService.subscribe(this.pair, this.exchange, this._onData);
+            }
+        }
     }
 }
-CryptoTicker.styles = css `
-    :host {
-      display: block;
-      padding: 25px;
-      color: var(--crypto-ticker-text-color, #000);
-    }
-  `;
 __decorate([
-    property({ type: String })
-], CryptoTicker.prototype, "title", void 0);
+    property({ type: String, attribute: true })
+], CryptoTicker.prototype, "pair", void 0);
 __decorate([
-    property({ type: Number })
-], CryptoTicker.prototype, "counter", void 0);
+    property({ type: String, attribute: true })
+], CryptoTicker.prototype, "exchange", void 0);
 //# sourceMappingURL=CryptoTicker.js.map
