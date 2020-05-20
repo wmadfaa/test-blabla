@@ -1,5 +1,5 @@
 {
-  "name": "@app/crypto-ticker",
+  "name": "web-crypto-ticker",
   "version": "1.0.0",
   "description": "Webcomponent crypto-ticker following open-wc recommendations",
   "author": "crypto-ticker",
